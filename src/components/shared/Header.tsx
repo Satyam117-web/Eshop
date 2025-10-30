@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { SearchBar } from './SearchBar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -34,7 +34,9 @@ export function Header() {
 
           {/* Desktop Search */}
           <div className="hidden flex-1 px-8 md:block">
-            <SearchBar />
+            <Suspense fallback={<div className="h-10" />}> 
+              <SearchBar />
+            </Suspense>
           </div>
 
           {/* Desktop Navigation */}
@@ -104,7 +106,9 @@ export function Header() {
         {/* Mobile Search Bar */}
         {isMobileSearchOpen && (
           <div className="border-t bg-gray-50 p-4 md:hidden">
-            <SearchBar />
+            <Suspense fallback={<div className="h-10" />}>
+              <SearchBar />
+            </Suspense>
           </div>
         )}
 

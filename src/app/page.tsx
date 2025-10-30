@@ -4,17 +4,15 @@ import { ProductList } from '@/components/products/ProductList';
 import Hero from '@/components/ui/Hero';
 import { searchProducts } from '@/lib/utils';
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams?: { search?: string } | Promise<{ search?: string }>;
-}) {
-   
+// Accept unknown props and resolve searchParams at runtime to avoid type-check mismatch with Next internals
+export default async function Home(props: unknown) {
+  const rawSearchParams = await Promise.resolve((props as unknown as { searchParams?: unknown })?.searchParams);
+  const searchParamsTyped = rawSearchParams as { search?: string } | undefined;
+
   await seedDatabase();
   const products = await db.getProducts();
-  
-  const resolvedParams = await Promise.resolve(searchParams);
-  const searchQuery = resolvedParams?.search?.trim() || '';
+
+  const searchQuery = searchParamsTyped?.search?.trim() || '';
   const filteredProducts = searchQuery
     ? searchProducts(products, searchQuery)
     : products;

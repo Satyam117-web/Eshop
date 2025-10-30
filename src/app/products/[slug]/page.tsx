@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/database';
-import { PRODUCT_REVALIDATION_TIME } from '@/lib/constants';
 import { ProductDetailWrapper } from '../../../components/products/ProductDetailWrapper';
 
  
-export const revalidate = PRODUCT_REVALIDATION_TIME;
+// Next.js requires page-level revalidate to be a static literal. Use a literal here.
+export const revalidate = 3600; // 1 hour
 
 export async function generateStaticParams() {
   const products = await db.getProducts();
@@ -13,22 +13,12 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function ProductDetailPage({ params }: { params: { slug?: string } | Promise<{ slug?: string }> }) {
+export default async function ProductDetailPage(props: unknown) {
+  // Resolve possible Promise-shaped params safely at runtime
+  const rawParams = await Promise.resolve((props as unknown as { params?: unknown })?.params);
+  const paramsTyped = rawParams as { slug?: string } | undefined;
 
-  // Resolve params if Next provided a Promise-like shape
-  let resolvedParams: { slug?: string; params?: { slug?: string } } | undefined = undefined;
-  if (params && typeof (params as unknown as Promise<unknown>)?.then === 'function') {
-    try {
-      resolvedParams = (await (params as unknown as Promise<{ slug?: string; params?: { slug?: string } }>)) || undefined;
-    } catch {
-      resolvedParams = undefined;
-    }
-  } else {
-    resolvedParams = params as { slug?: string; params?: { slug?: string } } | undefined;
-  }
-
-  // Try a few shapes for slug (direct or nested)
-  const rawSlug = resolvedParams?.slug ?? resolvedParams?.params?.slug;
+  const rawSlug = paramsTyped?.slug;
 
   if (!rawSlug) {
     // No slug available — show debug list in dev or 404 in prod
