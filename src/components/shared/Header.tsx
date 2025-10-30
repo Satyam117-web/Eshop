@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, Suspense } from 'react';
 import { SearchBar } from './SearchBar';
 import { useAuth } from '@/contexts/AuthContext';
@@ -22,8 +22,13 @@ export function Header() {
     router.push('/');
   };
 
+  const pathname = usePathname();
+
+  // don't render the cart sidebar when we're already on the cart page
+  const shouldShowCart = pathname !== '/cart' && isCartOpen;
+
   return (
-    <header className="border-b border-gray-200 bg-white shadow-sm position-sticky top-0 z-50" >
+    <header className="border-b border-gray-200 bg-white shadow-sm sticky top-0 z-50" >
       <div className="w-full px-4 lg:px-6">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-4">
@@ -162,7 +167,7 @@ export function Header() {
         )}
       </div>
 
-      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartSidebar isOpen={shouldShowCart} onClose={() => setIsCartOpen(false)} />
     </header>
   );
 }
