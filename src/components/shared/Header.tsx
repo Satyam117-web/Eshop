@@ -112,54 +112,54 @@ export function Header() {
           </div>
         )}
 
-        {/* Mobile Menu: full-screen slide-in from right on small devices */}
-  <div className={`fixed inset-0 z-50 md:hidden`} aria-hidden={!isMobileMenuOpen}>
-          {/* Backdrop (click to close) */}
-          <div
-            className={`absolute inset-0 bg-black transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-30 pointer-events-auto' : 'opacity-0'}`}
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
+        {/* Mobile Menu: only render when open to avoid invisible overlay intercepting touches on small devices */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 z-50 md:hidden" aria-hidden={!isMobileMenuOpen}>
+            {/* Backdrop (click to close) */}
+            <div
+              className="absolute inset-0 bg-black opacity-30 pointer-events-auto"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
 
-          {/* Sliding panel */}
-          <div
-            className={`absolute right-0 top-0 h-full w-full bg-white transform transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
-          >
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-4">
-                <Link href="/" className="text-xl font-bold text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>
-                  E-Shop
-                </Link>
-                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-gray-700 hover:text-blue-600">
-                  <X size={20} />
-                </button>
-              </div>
-
-              <nav className="flex flex-col space-y-4 mt-2">
-                <Link href="/" className="text-gray-700 text-lg hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-
-                {isAdmin && (
-                  <>
-                    <Link href="/dashboard" className="text-gray-700 text-lg hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Dashboard</Link>
-                    <Link href="/admin" className="text-gray-700 text-lg hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Admin</Link>
-                  </>
-                )}
-
-                {isAuthenticated ? (
-                  <div className="flex flex-col space-y-2">
-                    <span className="text-base text-gray-600">{user?.name} {isAdmin && '(Admin)'}</span>
-                    <Button variant="outline" size="md" onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}>
-                      Logout
-                    </Button>
-                  </div>
-                ) : (
-                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="primary" size="md">Login</Button>
+            {/* Sliding panel (full screen) */}
+            <div className="absolute right-0 top-0 h-full w-full bg-white transform translate-x-0">
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <Link href="/" className="text-xl font-bold text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>
+                    E-Shop
                   </Link>
-                )}
-              </nav>
+                  <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-gray-700 hover:text-blue-600">
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <nav className="flex flex-col space-y-4 mt-2">
+                  <Link href="/" className="text-gray-700 text-lg hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+
+                  {isAdmin && (
+                    <>
+                      <Link href="/dashboard" className="text-gray-700 text-lg hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Dashboard</Link>
+                      <Link href="/admin" className="text-gray-700 text-lg hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Admin</Link>
+                    </>
+                  )}
+
+                  {isAuthenticated ? (
+                    <div className="flex flex-col space-y-2">
+                      <span className="text-base text-gray-600">{user?.name} {isAdmin && '(Admin)'}</span>
+                      <Button variant="outline" size="md" onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}>
+                        Logout
+                      </Button>
+                    </div>
+                  ) : (
+                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="primary" size="md">Login</Button>
+                    </Link>
+                  )}
+                </nav>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
